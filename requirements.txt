@@ -1,0 +1,6 @@
+kagglehub
+ultralytics
+torch
+torchvision
+mlflow
+pytest
