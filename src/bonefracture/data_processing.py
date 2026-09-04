@@ -111,3 +111,80 @@ def check_split_leakage(dataset_dir, split_a, split_b):
     hashes_b = compute_hashes(dataset_dir, split_b)
 
     return set(hashes_a.keys()) & set(hashes_b.keys())
+
+def rebuild_dataset_verified(dataset_dir, verbose=True):
+    def log(msg):
+        if verbose:
+            print(msg)
+
+    import kagglehub
+    local_path = kagglehub.dataset_download("pkdarabi/bone-fracture-detection-computer-vision-project")
+
+    shutil.rmtree(dataset_dir, ignore_errors=True)
+    shutil.copytree(local_path, dataset_dir)
+    log("✅ Stage 1: downloaded and copied")
+
+    CHOSEN = "BoneFractureYolo8"
+    DUPLICATE = "bone fracture detection.v4-v4.yolov8"
+    if os.path.exists(os.path.join(dataset_dir, CHOSEN)):
+        for item in os.listdir(os.path.join(dataset_dir, CHOSEN)):
+            shutil.move(os.path.join(dataset_dir, CHOSEN, item), os.path.join(dataset_dir, item))
+        shutil.rmtree(os.path.join(dataset_dir, CHOSEN))
+        if os.path.exists(os.path.join(dataset_dir, DUPLICATE)):
+            shutil.rmtree(os.path.join(dataset_dir, DUPLICATE))
+    log("✅ Stage 2: flattened")
+
+    yaml_path = os.path.join(dataset_dir, 'data.yaml')
+    with open(yaml_path) as f:
+        config = yaml.safe_load(f)
+    config['train'], config['val'], config['test'] = 'train/images', 'valid/images', 'test/images'
+
+    old_class_names = config['names']
+    OLD_CLASS, NEW_CLASS = 'humerus', 'humerus fracture'
+
+    if OLD_CLASS in old_class_names:
+        old_id = old_class_names.index(OLD_CLASS)
+        new_class_names = [c for c in old_class_names if c != OLD_CLASS]
+        new_id_for_merged = new_class_names.index(NEW_CLASS)
+
+        id_remap = {i: new_class_names.index(old_class_names[i])
+                    for i in range(len(old_class_names)) if old_class_names[i] != OLD_CLASS}
+        id_remap[old_id] = new_id_for_merged  # route merged class correctly
+
+        total_before, total_after = 0, 0
+        for split in ['train', 'valid', 'test']:
+            split_labels_dir = os.path.join(dataset_dir, split, 'labels')
+            for label_file in os.listdir(split_labels_dir):
+                label_path = os.path.join(split_labels_dir, label_file)
+                with open(label_path) as f:
+                    lines = f.readlines()
+                total_before += len(lines)
+
+                new_lines = [r for line in lines if (r := merge_label_line(line, id_remap)) is not None]
+                total_after += len(new_lines)
+
+                with open(label_path, 'w') as f:
+                    f.writelines(new_lines)
+
+        if total_after < total_before * 0.95:
+            log(f"⚠️ WARNING: {total_before} lines before, {total_after} after — investigate!")
+        else:
+            log(f"✅ Stage 3: merge complete. {total_before} -> {total_after} lines")
+
+        config['nc'] = len(new_class_names)
+        config['names'] = new_class_names
+        with open(yaml_path, 'w') as f:
+            yaml.dump(config, f, default_flow_style=False)
+    else:
+        log("✅ Stage 3: skipped, already merged")
+
+    log(f"\n🎉 Complete. nc={config['nc']}, names={config['names']}")
+    return True
+
+def merge_label_line(line, id_remap):
+    parts = line.strip().split()
+    if len(parts) < 5:
+        return None
+    class_id = int(parts[0])
+    parts[0] = str(id_remap.get(class_id, class_id))
+    return ' '.join(parts) + '\n'
