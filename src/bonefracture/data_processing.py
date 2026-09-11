@@ -6,6 +6,7 @@ bone fracture detection project.
 import os
 from PIL import Image
 import imagehash
+import shutil
 
 
 def get_split_paths(dataset_dir, split_name):
