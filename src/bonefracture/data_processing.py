@@ -227,3 +227,24 @@ def convert_split_to_bbox(raw_dir, processed_dir, split_name):
             f.writelines(new_lines)
 
     return len(os.listdir(src_labels))
+
+def polygon_to_bbox(coords):
+    """
+    Convert a polygon (list of x,y pairs) to a YOLO-format bounding box
+    (x_center, y_center, width, height), all normalized 0-1.
+
+    We just take the min/max extent of all polygon points — the smallest
+    box that fully contains the polygon shape.
+    """
+    xs = coords[0::2]  # every even index: x1, x2, x3...
+    ys = coords[1::2]  # every odd index: y1, y2, y3...
+
+    x_min, x_max = min(xs), max(xs)
+    y_min, y_max = min(ys), max(ys)
+
+    x_center = (x_min + x_max) / 2
+    y_center = (y_min + y_max) / 2
+    width = x_max - x_min
+    height = y_max - y_min
+
+    return x_center, y_center, width, height
