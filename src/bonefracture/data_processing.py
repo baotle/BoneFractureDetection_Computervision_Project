@@ -188,3 +188,41 @@ def merge_label_line(line, id_remap):
     class_id = int(parts[0])
     parts[0] = str(id_remap.get(class_id, class_id))
     return ' '.join(parts) + '\n'
+
+def convert_split_to_bbox(raw_dir, processed_dir, split_name):
+    """
+    Read every polygon-format label file in a split, convert to
+    bbox format, and write to the corresponding location under
+    processed_dir. Images are copied unchanged (only labels differ).
+    """
+    src_images = os.path.join(raw_dir, split_name, 'images')
+    src_labels = os.path.join(raw_dir, split_name, 'labels')
+    dst_images = os.path.join(processed_dir, split_name, 'images')
+    dst_labels = os.path.join(processed_dir, split_name, 'labels')
+
+    os.makedirs(dst_images, exist_ok=True)
+    os.makedirs(dst_labels, exist_ok=True)
+
+    # Copy images as-is
+    for filename in os.listdir(src_images):
+        shutil.copy2(os.path.join(src_images, filename), os.path.join(dst_images, filename))
+
+    # Convert each label file
+    for filename in os.listdir(src_labels):
+        with open(os.path.join(src_labels, filename)) as f:
+            lines = f.readlines()
+
+        new_lines = []
+        for line in lines:
+            parts = line.strip().split()
+            if len(parts) < 5:
+                continue
+            class_id = parts[0]
+            coords = [float(v) for v in parts[1:]]
+            x_c, y_c, w, h = polygon_to_bbox(coords)
+            new_lines.append(f"{class_id} {x_c:.6f} {y_c:.6f} {w:.6f} {h:.6f}\n")
+
+        with open(os.path.join(dst_labels, filename), 'w') as f:
+            f.writelines(new_lines)
+
+    return len(os.listdir(src_labels))
