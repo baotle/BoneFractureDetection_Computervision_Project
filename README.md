@@ -14,6 +14,10 @@ The notebooks (.ipynb) provided show
 - saving the best model directly to their google drive
 - while pushing and pulling to their respective github repository
 
+## Overview
+<img width="2205" height="1241" alt="OverviewGraphic-1" src="https://github.com/user-attachments/assets/f3c78b03-633c-4775-bdd9-35ba07edbdf8" />
+
+
 ## Dataset
 
 Specific to the "Bone Fracture Detection Dataset:
@@ -56,3 +60,5 @@ This result was also recovered by another YOLO model, specifically YOLOv11 train
 - Dataset: Bone Fracture Detection, Roboflow Universe (veda), https://universe.roboflow.com/veda/bone-fracture-detection-daoon
 - How to write a Good README : https://www.freecodecamp.org/news/how-to-write-a-good-readme-file/  
 - Blankname78 kaggle notebook:  https://www.kaggle.com/code/blankname78/yolov11
+- [Kaggle](https://www.kaggle.com/static/images/logos/kaggle-logo-transparent-300.png)  
+*Kaggle logo used for identification purposes; trademark of Kaggle Inc. (a Google company).*
