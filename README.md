@@ -26,7 +26,7 @@ The notebooks (.ipynb) provided show
 ## Overview
 <img width="2205" height="1241" alt="OverviewGraphic-1" src="https://github.com/user-attachments/assets/f3c78b03-633c-4775-bdd9-35ba07edbdf8" />
 
-***Figure 1. Overview of the dataset processing pipeline***
+***Figure 2. Overview of the dataset processing pipeline***
 
 ## Dataset
 Before training the original dataset from kaggle was examined with different python functions for integrity. Said functions can be found in [src/bonefracture/data_processing.py](https://github.com/baotle/BoneFractureDetection_Computervision_Project/blob/main/src/bonefracture/data_processing.py)):
