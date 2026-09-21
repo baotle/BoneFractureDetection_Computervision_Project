@@ -19,31 +19,44 @@ The notebooks (.ipynb) provided show
 
 
 ## Dataset
-Before training the original dataset from kaggle was examined with different python functions for integrity. Said functions can be found in src/bonefracture/data_processing.py:
+Before training the original dataset from kaggle was examined with different python functions for integrity. Said functions can be found in [src/bonefracture/data_processing.py](https://github.com/baotle/BoneFractureDetection_Computervision_Project/blob/main/src/bonefracture/data_processing.py)):
 
-- check_image_integrity ( makes sure all files in the dataset can be opened)
-- check_label_integrity ( makes sure all files in the dataset adhere to label conventions for training)
-- check_split_leakage ( makes sure there are no near duplicates across splits )
-- count_class_distribution ( sanity check for class distribution before and after augmenting )
+- **check_image_integrity** ( makes sure all files in the dataset can be opened)
+- **check_label_integrity** ( makes sure all files in the dataset adhere to label conventions for training)
+- **check_split_leakage** ( makes sure there are no near duplicates across splits )
+- **count_class_distribution** ( sanity check for class distribution before and after augmenting )
 
 Specific to the "Bone Fracture Detection Dataset:
 
 Upon further investigation the original "humerus" and "humerus fracture" class were both merged into one "humerus fracture" class
-A) because they both contain fractured humeri
-B) to standardize naming conventions accross the classes
+- because they both contain fractured humeri
+- to standardize naming conventions accross the classes
 
 To reduce computation time on a simpler model, the 'coords' of the outlines of the fractures were reduced to simple 
 rectangular bounding boxes via the 'convert_split_tobbox' function
 
+Before training the images were further augmented to simulate slightly misaligned, shifted, blurry X-Ray pictures. 
+With in-built ultralytics functionality the following parameters were applied
+
+
+| Parameter | value | Parameter | value |
+|  --------- | ------ | ---------- | ------- |
+| weight_decay | 0.001  |hsv_v | 0.2 |
+| hsv_h | 0|hsv_s|0.0|  scale | 0.2 |
+| degrees|5 |translate|0.1| 
+| shear|0.0| flipud|0.0| 
+|fliplr|0.5| mosaic|0.0|
+|scale|0.2|
 
 ## Results
 
 The following results were achieved by training a YOLOv8 model for 30 epochs and taking its best performing model.
 
+
 | Class              | Images | Instances | Precision | Recall | mAP50 | mAP50-95 |
 |--------------------|--------|-----------|-----------|--------|-------|----------|
 | **All**            | 169    | 96        | 0.186     | 0.142  | 0.145 | 0.0622   |
-| Elbow positive     | 13     | 17        | 0.000     | 0.000  | 0.033 | 0.008    |
+| Elbow positive     | 13     | 17        | **0.000**     | **0.000**  | 0.033 | 0.008    |
 | Fingers positive   | 22     | 27        | 0.234     | 0.074  | 0.062 | 0.018    |
 | Forearm fracture   | 13     | 14        | 0.143     | 0.429  | 0.284 | 0.143    |
 | Humerus fracture   | 14     | 15        | 0.220     | 0.067  | 0.168 | 0.080    |
