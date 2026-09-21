@@ -63,13 +63,18 @@ The following results were achieved by training a YOLOv8 model for 30 epochs and
 | Shoulder fracture  | 15     | 17        | 0.230     | 0.118  | 0.151 | 0.038    |
 | Wrist positive     | 6      | 6         | 0.290     | 0.167  | 0.174 | 0.085    |
 
+## Discussion
+Surprisingly, the performance does not track training-set size in the way expected. fingers positive (531 train examples) has the worst test mAP, while humerus fracture (314 examples) performs best. 
+This is  likely due to some fracture types (fingers, wrist, elbow) are visually subtler/smaller in the X-ray than others (humerus, forearm), making them intrinsically harder to detect regardless of example count. 
+At the same time the test set has very few instances per class (20-48), so individual metrics carry real variance/noise.
+
 Worth highlighting are the precision (0.000) and recall (0.000) of the elbow positive class.
 This result was also recovered by another YOLO model, specifically YOLOv11 training on the same dataset but with the humerus / humerus fracture distinction in tact.
 This indicates a systemic problem with the dataset that cannot be remedied by adjusting the model parameters or the training regiment.
 
 ## Challenges 
 
-
+During a session it is likely that the label format have been updated between an earlier format and a later one. This lead to incompatibility issues with especially the **polygon_to_bbbox** function and ultimately led to the construction of the ideopotent **rebuild_dataset_verfied** function that from then on handled downloading the dataset and verifying its compatability. For future projects it's higly advised to keep track of the different kaggle dataset versions.
 
 
 ## References
