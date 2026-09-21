@@ -36,7 +36,7 @@ Before training the original dataset from kaggle was examined with different pyt
 - **check_split_leakage** ( makes sure there are no near duplicates across splits )
 - **count_class_distribution** ( sanity check for class distribution before and after augmenting )
 
-Specific to the "Bone Fracture Detection Dataset:
+Specific to the "Bone Fracture Detection Dataset":
 
 Upon further investigation the original "humerus" and "humerus fracture" class were both merged into one "humerus fracture" class
 - because they both contain fractured humeri
@@ -49,18 +49,18 @@ Before training the images were further augmented to account for slightly misali
 With in-built ultralytics functionality the following parameters were applied
 
 
-| Parameter | value | Reasoning
+| Parameter | Value | Reasoning
 |  --------- | ------ | ---------- | 
 |hsv_v | 0.2 | Mild brightness jitter, exposure variation |
-| hsv_h | 0| Off-grayscale X-rays, hue has no meaning |
-|hsv_s|0.0| Off- same reasoning |
+| hsv_h | 0 | Off-grayscale X-rays, hue has no meaning |
+|hsv_s| 0.0 | Off- same reasoning |
 |  scale | 0.2 | Mild zoom, patient distance variation |
-| degrees|5 | Small rotation only, X-rays are near-upright|
-|translate|0.1|  Mild framing variation
-| shear|0.0| Off, unlikely for X-ray|
-| flipud|0.0| Off, unlikely for X-ray|
-|fliplr|0.5| On, no left/ right disctinction in classes |
-| mosaic|0.0| Off, doesn't map to single-subject images |
+| degrees| 5 | Small rotation only, X-rays are near-upright|
+|translate| 0.1 |  Mild framing variation
+| shear| 0.0 | Off, unlikely for X-ray|
+| flipud| 0.0 | Off, unlikely for X-ray|
+|fliplr| 0.5 | On, no left/ right disctinction in classes |
+| mosaic| 0.0 | Off, doesn't map to single-subject images |
 
 ## Results
 
@@ -88,13 +88,13 @@ This suggests a systemic issue with the dataset's annotation consistency, rather
 
 ## Challenges 
 
-During a session it is likely that the label format have been updated between an earlier format and a later one. This lead to incompatibility issues with especially the **polygon_to_bbox** function and ultimately led to the construction of the idempotent **rebuild_dataset_verfied** function that from then on handled downloading the dataset and verifying its compatibility. For future projects it's highly advised to keep track of the different kaggle dataset versions.
+During a session it is likely that the label format have been updated between an earlier format and a later one. This lead to incompatibility issues with especially the **polygon_to_bbox** function and ultimately led to the construction of the idempotent **rebuild_dataset_verified** function that from then on handled downloading the dataset and verifying its compatibility. For future projects it's highly advised to keep track of the different kaggle dataset versions.
 
 ## Limitations & Future Work
 
 **Class-specific performance gaps.** As discussed above, the "positive"-named
 classes (elbow, fingers, wrist) consistently underperform the "fracture"-named
-classes (forearm, humerus, shoulder), which is a held across two
+classes (forearm, humerus, shoulder), which is held across two
 independently trained models. This points toward inconsistent annotation
 quality across the original label set rather than a fixable training issue,
 but it hasn't been rigorously confirmed. A closer manual audit of a sample
