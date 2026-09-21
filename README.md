@@ -21,13 +21,19 @@ The notebooks (.ipynb) provided show
 ## Dataset
 
 Specific to the "Bone Fracture Detection Dataset:
-This repository also contains code on how to merge two classes in this case ( humerus, humerus fracture)
-- Class imbalance
-- humerus / humerus fracture merge decision
-- picture
-- data leakage check
+
+Upon further investigation the original "humerus" and "humerus fracture" class were both merged into one "humerus fracture" class
+A) because they both contain fractured humeri
+B) to standardize naming conventions accross the classes
+
+To reduce computation time on a simpler model, the 'coords' of the outlines of the fractures were reduced to simple 
+rectangular bounding boxes via the 'convert_split_tobbox' function
+
 
 ## Results
+
+The following results were achieved by training a YOLOv8 model for 30 epochs and taking its best performing model.
+
 | Class              | Images | Instances | Precision | Recall | mAP50 | mAP50-95 |
 |--------------------|--------|-----------|-----------|--------|-------|----------|
 | **All**            | 169    | 96        | 0.186     | 0.142  | 0.145 | 0.0622   |
@@ -38,19 +44,12 @@ This repository also contains code on how to merge two classes in this case ( hu
 | Shoulder fracture  | 15     | 17        | 0.230     | 0.118  | 0.151 | 0.038    |
 | Wrist positive     | 6      | 6         | 0.290     | 0.167  | 0.174 | 0.085    |
 
-worth highlighting are the precision (0.000) and recall (0.000) of the elbow positive class.
+Worth highlighting are the precision (0.000) and recall (0.000) of the elbow positive class.
 This result was also recovered by another YOLO model, specifically YOLOv11 training on the same dataset but with the humerus / humerus fracture distinction in tact.
-
-- confusion matrix / PR curve images embedded
+This indicates a systemic problem with the dataset that cannot be remedied by adjusting the model parameters or the training regiment.
 
 ## Challenges 
 
-## Limitations & Future Work
-  worth highlighting are the precision (0.000) and recall (0.000) of the elbow positive class.
-  This result was also recovered by another YOLO model, specifically YOLOv11 training on the same dataset but with the humerus / humerus fracture distinction in tact.
-
-- Ablation ideas(fliplr, mosaic)
-- Segmentation as a strecth goal
   
 
 
