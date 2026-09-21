@@ -19,6 +19,12 @@ The notebooks (.ipynb) provided show
 
 
 ## Dataset
+Before training the original dataset from kaggle was examined with different python functions for integrity. Said functions can be found in src/bonefracture/data_processing.py:
+
+- check_image_integrity ( makes sure all files in the dataset can be opened)
+- check_label_integrity ( makes sure all files in the dataset adhere to label conventions for training)
+- check_split_leakage ( makes sure there are no near duplicates across splits )
+- count_class_distribution ( sanity check for class distribution before and after augmenting )
 
 Specific to the "Bone Fracture Detection Dataset:
 
@@ -50,7 +56,7 @@ This indicates a systemic problem with the dataset that cannot be remedied by ad
 
 ## Challenges 
 
-  
+
 
 
 ## References
